@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Funciones I · Juego de dominio y rango</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1b1f2a;--mut:#5b6475;--pri:#2e5597;--ok:#2e7d32;--okbg:#e6f4e7;--bad:#c62828;--badbg:#fdeaea;--bd:#d5dbe7}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--card:#1d222d;--tx:#eef1f7;--mut:#a3adc2;--pri:#7fa6ee;--ok:#7bd07f;--okbg:#1f3322;--bad:#ff8a80;--badbg:#3a2022;--bd:#343c4d}}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--tx);line-height:1.45}
+main{max-width:680px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:20px;margin-bottom:14px}
+h1{font-size:1.6rem;margin:0 0 6px;color:var(--pri)}
+h2{font-size:1.15rem;margin:0 0 12px}
+p{margin:0 0 10px}
+.mut{color:var(--mut);font-size:.92rem}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--pri);color:#fff;border:0;border-radius:10px;padding:12px 20px;font-weight:bold}
+.btn:hover{opacity:.9}
+.opt{display:block;width:100%;text-align:left;background:var(--card);color:var(--tx);border:2px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:8px;font-size:1.05rem}
+.opt:hover:not(:disabled){border-color:var(--pri)}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin-bottom:14px}
+.bar div{height:100%;background:var(--pri);width:0;transition:width .3s}
+.top{display:flex;justify-content:space-between;font-size:.92rem;color:var(--mut);margin-bottom:6px}
+.fb{border-radius:10px;padding:12px 14px;margin:12px 0;font-size:.98rem}
+.fb.ok{background:var(--okbg);border-left:5px solid var(--ok)}
+.fb.bad{background:var(--badbg);border-left:5px solid var(--bad)}
+.q{font-size:1.15rem;font-weight:bold;margin-bottom:6px}
+.code{font-family:"Courier New",monospace;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;margin:8px 0 14px;font-size:1.02rem;overflow-x:auto}
+.big{font-size:2.6rem;font-weight:bold;color:var(--pri);margin:4px 0}
+.rev{border-top:1px solid var(--bd);padding-top:12px;margin-top:12px}
+.rev b.ok{color:var(--ok)}.rev b.bad{color:var(--bad)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+  <section id="start" class="card">
+    <h1>Funciones I</h1>
+    <p>Dominio, rango e intervalos. 10 preguntas, una respuesta correcta en cada una.</p>
+    <p class="mut">Recuerda: el <b>dominio</b> es lo que <b>entra</b> (x) y el <b>rango</b> es lo que <b>sale</b> (y). Al final verás todas las respuestas explicadas. Puedes jugar las veces que quieras.</p>
+    <button class="btn" id="go">Empezar</button>
+  </section>
+
+  <section id="game" class="hide">
+    <div class="top"><span id="num"></span><span id="pts"></span></div>
+    <div class="bar"><div id="prog"></div></div>
+    <div class="card">
+      <div class="q" id="qt"></div>
+      <div class="code hide" id="qc"></div>
+      <div id="opts"></div>
+      <div id="fb" class="fb hide"></div>
+      <button class="btn hide" id="next">Siguiente</button>
+    </div>
+  </section>
+
+  <section id="end" class="hide">
+    <div class="card" style="text-align:center">
+      <h2>¡Terminaste!</h2>
+      <div class="big" id="score"></div>
+      <p id="msg"></p>
+      <button class="btn" id="again">Jugar otra vez</button>
+    </div>
+    <div class="card"><h2>Respuestas y explicaciones</h2><div id="rev"></div></div>
+  </section>
+</main>
+
+<script>
+const Q = [
+ {q:"¿Cuál de estas relaciones es una función?", o:["{(1; 2), (1; 3), (2; 4)}","{(1; 4), (2; 4), (3; 4)}","{(2; 1), (2; 5), (3; 7)}","{(5; 1), (6; 2), (5; 3)}"], a:1,
+  e:"En {(1; 4), (2; 4), (3; 4)} ninguna primera componente se repite. Que el 4 se repita como resultado no importa. En las demás, un mismo x tiene dos resultados."},
+ {q:"Halla el dominio de la función:", c:"f = {(7; 2), (5; 0), (3; −1), (1; 4)}", o:["{2; 0; −1; 4}","{7; 5; 3; 1}","{7; 5; −1; 4}","{1; 2; 3; 4}"], a:1,
+  e:"El dominio son las primeras componentes: 7, 5, 3 y 1."},
+ {q:"Halla el rango de la función:", c:"g = {(2; 6), (4; 6), (6; 9), (8; 1)}", o:["{2; 4; 6; 8}","{6; 9}","{1; 6; 9}","{1; 6; 6; 9}"], a:2,
+  e:"El rango son las segundas componentes: 6, 6, 9 y 1. Un elemento repetido en un conjunto se escribe una sola vez: {1; 6; 9}."},
+ {q:"Una recta vertical corta una gráfica en dos puntos. ¿Qué concluimos?", o:["Es una función","No es una función","Es una función solo si es una recta","No se puede saber"], a:1,
+  e:"Si una vertical corta en dos puntos, un mismo x tiene dos valores de y. Entonces no es función."},
+ {q:"¿La relación h = {(1; 5), (2; 5), (3; 5)} es una función?", o:["Sí, porque ninguna primera componente se repite","No, porque el 5 se repite","No, porque faltan pares","Solo si se agrega (4; 5)"], a:0,
+  e:"Lo que no se puede repetir es la primera componente con resultados distintos. El 5 puede repetirse como resultado. Sí es función."},
+ {q:"Halla n para que f sea una función:", c:"f = {(3; 2n − 5), (3; 7)}", o:["n = 5","n = 6","n = 7","n = 12"], a:1,
+  e:"Las primeras componentes son iguales (3), así que las segundas deben serlo: 2n − 5 = 7, entonces 2n = 12 y n = 6."},
+ {q:"¿Cómo se escribe −3 < x ≤ 5 como intervalo?", o:["[−3; 5]","⟨−3; 5⟩","⟨−3; 5]","[−3; 5⟩"], a:2,
+  e:"Con < el extremo no se incluye (⟨ ). Con ≤ el extremo sí se incluye ( ] ). Queda ⟨−3; 5]."},
+ {q:"En una gráfica, el rango empieza en y = −2 con punto lleno y termina en y = 4 con círculo vacío. ¿Cuál es el rango?", o:["[−2; 4]","⟨−2; 4⟩","⟨−2; 4]","[−2; 4⟩"], a:3,
+  e:"Punto lleno incluye el extremo: [−2. Círculo vacío no lo incluye: 4⟩. Rango = [−2; 4⟩."},
+ {q:"Si el rango de una función es [−2; 6], ¿cuántos valores enteros admite?", o:["7","8","9","10"], a:2,
+  e:"Los enteros son −2, −1, 0, 1, 2, 3, 4, 5 y 6. Son 9 valores."},
+ {q:"Halla la suma de los elementos del rango:", c:"f = {(1; 2), (3; −1), (4; −3)}", o:["−2","2","8","−4"], a:0,
+  e:"Rango = {2; −1; −3}. Suma: 2 + (−1) + (−3) = −2."}
+];
+
+const $ = id => document.getElementById(id);
+let order, i, score, answers;
+const shuffle = a => { a = a.slice(); for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; };
+const show = id => ["start", "game", "end"].forEach(s => $(s).classList.toggle("hide", s !== id));
+
+function begin() {
+  order = shuffle(Q.map((_, k) => k)).map(k => {
+    const q = Q[k], idx = shuffle(q.o.map((_, n) => n));
+    return { q, idx };
+  });
+  i = 0; score = 0; answers = [];
+  show("game"); render();
+}
+
+function render() {
+  const { q, idx } = order[i];
+  $("num").textContent = "Pregunta " + (i + 1) + " de " + order.length;
+  $("pts").textContent = "Puntos: " + score;
+  $("prog").style.width = (i / order.length * 100) + "%";
+  $("qt").textContent = q.q;
+  $("qc").classList.toggle("hide", !q.c);
+  $("qc").textContent = q.c || "";
+  $("fb").classList.add("hide"); $("next").classList.add("hide");
+  const box = $("opts"); box.innerHTML = "";
+  idx.forEach(n => {
+    const b = document.createElement("button");
+    b.className = "opt"; b.textContent = q.o[n];
+    b.onclick = () => pick(n, b);
+    box.appendChild(b);
+  });
+}
+
+function pick(n, btn) {
+  const { q, idx } = order[i];
+  const right = n === q.a;
+  if (right) score++;
+  answers.push({ q, n, right });
+  [...$("opts").children].forEach((b, k) => {
+    b.disabled = true;
+    if (idx[k] === q.a) b.classList.add("ok");
+  });
+  if (!right) btn.classList.add("bad");
+  const fb = $("fb");
+  fb.className = "fb " + (right ? "ok" : "bad");
+  fb.textContent = (right ? "¡Correcto! " : "Todavía no. ") + q.e;
+  $("pts").textContent = "Puntos: " + score;
+  $("next").textContent = i === order.length - 1 ? "Ver resultado" : "Siguiente";
+  $("next").classList.remove("hide");
+}
+
+function finish() {
+  $("prog").style.width = "100%";
+  $("score").textContent = score + " / " + order.length;
+  $("msg").textContent = score === order.length ? "¡Perfecto! Dominas dominio y rango." :
+    score >= 7 ? "¡Muy bien! Repasa las que fallaste y vuelve a intentarlo." :
+    "Buen intento. Lee las explicaciones y juega otra vez: las preguntas cambian de orden.";
+  const rv = $("rev"); rv.innerHTML = "";
+  answers.forEach((a, k) => {
+    const d = document.createElement("div"); d.className = "rev";
+    const t = document.createElement("p");
+    t.innerHTML = "<b>" + (k + 1) + ".</b> ";
+    t.appendChild(document.createTextNode(a.q.q + (a.q.c ? "  " + a.q.c : "")));
+    const r = document.createElement("p");
+    const s = document.createElement("b"); s.className = a.right ? "ok" : "bad";
+    s.textContent = a.right ? "Acertaste. " : "Tu respuesta: " + a.q.o[a.n] + ". ";
+    r.appendChild(s);
+    r.appendChild(document.createTextNode("Respuesta correcta: " + a.q.o[a.q.a]));
+    const e = document.createElement("p"); e.className = "mut"; e.textContent = a.q.e;
+    d.append(t, r, e); rv.appendChild(d);
+  });
+  show("end"); window.scrollTo(0, 0);
+}
+
+$("go").onclick = begin;
+$("again").onclick = () => { begin(); window.scrollTo(0, 0); };
+$("next").onclick = () => { if (i === order.length - 1) finish(); else { i++; render(); } };
+</script>
+</body>
+</html>
